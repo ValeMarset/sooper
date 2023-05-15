@@ -1,15 +1,19 @@
 package com.sooper.productos;
 
 
+import com.sooper.IContenedor;
 import com.sooper.IProducto;
+import com.sooper.contenedores.Contenedor;
 
 public abstract class Producto implements IProducto {
+
     private String referencia;
     private int peso;
     private int volumen;
 
+    private IContenedor contenedor;
 
-    public Producto(String referencia, int peso, int volumen){
+    public Producto(String referencia, int peso, int volumen) {
         this.referencia = referencia;
         this.peso = peso;
         this.volumen = volumen;
@@ -17,21 +21,32 @@ public abstract class Producto implements IProducto {
 
     @Override
     public String getReferencia() {
-        return null;
+        return referencia;
     }
 
     @Override
     public int getPeso() {
-        return 0;
+        return peso;
     }
 
     @Override
     public int getVolumen() {
-        return 0;
+        return volumen;
     }
 
     @Override
-    public boolean tengoEspacio(IProducto p) {
-        return false;
+    public boolean tengoEspacio(IContenedor contenedor) {
+        return contenedor.volumenDisponible() > volumen;
+    }
+
+    @Override
+    public void meter(IContenedor contenedor) {
+        this.contenedor = contenedor;
+    }
+
+    @Override
+    public String toString() {
+        return "Producto [categoria=" + getCategoria() + ", referencia=" + referencia + ", peso=" + peso + ", volumen="
+                + volumen + ", contenedor=" + contenedor.getReferencia() + "]";
     }
 }

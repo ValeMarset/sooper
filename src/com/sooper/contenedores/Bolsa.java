@@ -1,19 +1,32 @@
 package com.sooper.contenedores;
 
+import com.sooper.Caducable;
 import com.sooper.enums.TipoContenedor;
 
-public class Bolsa extends Contenedor {
+import java.time.LocalDate;
+
+public class Bolsa extends Contenedor implements Caducable {
+
+    private static final int ANYOS_CADUCIDAD = 5;
+
     private int ancho;
+    private LocalDate fechaFabricacion;
 
-    public Bolsa(String referencia, int alto, int ancho){
-        super(referencia, alto);
+    public Bolsa(String referencia, int alto, int ancho, int resistencia, LocalDate fechaFabricacion) {
+        super(referencia, alto, resistencia);
         this.ancho = ancho;
-
+        this.fechaFabricacion = fechaFabricacion;
     }
+
+    @Override
+    public TipoContenedor getTipo() {
+        return TipoContenedor.BOLSA;
+    }
+
     @Override
     public int getSuperficie() {
         int radio = getDiametro()/2;
-        return (int) (Math.PI * radio * radio);
+        return (int)(Math.PI * radio * radio);
     }
 
     private int getDiametro() {
@@ -21,7 +34,8 @@ public class Bolsa extends Contenedor {
     }
 
     @Override
-    public TipoContenedor getTipo() {
-        return TipoContenedor.BOLSA;
+    public boolean estaCaducado() {
+        return LocalDate.now().isBefore(fechaFabricacion.plusYears(ANYOS_CADUCIDAD));
     }
+
 }

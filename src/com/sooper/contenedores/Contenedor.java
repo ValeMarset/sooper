@@ -3,21 +3,23 @@ package com.sooper.contenedores;
 import com.sooper.IContenedor;
 import com.sooper.IProducto;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public abstract class Contenedor implements IContenedor {
 
-    public Contenedor(String referencia, int alto){
-        this.referencia = referencia;
-        this.alto = alto;
-    }
-
     private String referencia;
     private int alto;
-
     private int resistencia;
 
     private Set<IProducto> productos;
+
+    public Contenedor(String referencia, int alto, int resistencia) {
+        this.referencia = referencia;
+        this.alto = alto;
+        this.resistencia = resistencia;
+        productos = new HashSet<IProducto>();
+    }
 
     @Override
     public String getReferencia() {
@@ -31,7 +33,15 @@ public abstract class Contenedor implements IContenedor {
 
     @Override
     public int volumenDisponible() {
-        return 0;
+        return getVolumen() - volumenOcupado();
+    }
+
+    private int volumenOcupado() {
+        int res = 0;
+        for (IProducto p : productos) {
+            res += p.getVolumen();
+        }
+        return res;
     }
 
     @Override
@@ -44,14 +54,40 @@ public abstract class Contenedor implements IContenedor {
         return productos;
     }
 
-
     @Override
     public boolean meter(IProducto producto) {
-        return false;
+        boolean resistenciaOk = resiste(producto);
+        boolean volumenOk = producto.tengoEspacio(this);
+        boolean compatibilidadOk = true;
+
+        for (IProducto p : productos) {
+            boolean compatibleOk = producto.esCompatible(p);
+            compatibilidadOk &= compatibleOk;
+        }
+
+        boolean acepta = resistenciaOk && volumenOk && compatibilidadOk;
+        if (acepta) {
+            productos.add(producto);
+            producto.meter(this);
+        }
+        return acepta;
     }
 
     @Override
     public boolean resiste(IProducto producto) {
-        return false;
+        return resistencia > producto.getPeso();
+    }
+
+    public String toString() {
+        StringBuilder sb = new StringBuilder("Contenedor " + referencia + " [" + getTipo() +
+                "] (sup " + getSuperficie() + "cm2 - vol " + getVolumen() + "cm3 - resistencia " + getResistencia() + " g).\n");
+        if (productos.isEmpty()) {
+            sb.append("\t\tvacío\n");
+        }
+        for (IProducto p : productos) {
+            sb.append("\t\t" + p + "\n");
+        }
+        sb.append("\t\t>> Disponible vol " + volumenDisponible() + "cm3");
+        return sb.toString();
     }
 }

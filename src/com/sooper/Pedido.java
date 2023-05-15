@@ -3,10 +3,11 @@ package com.sooper;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Pedido implements IPedido{
+public class Pedido implements IPedido {
 
     private String referencia;
     private Set<IContenedor> contenedores;
+
     public Pedido(String referencia) {
         this.referencia = referencia;
         this.contenedores = new HashSet<IContenedor>();
@@ -19,7 +20,15 @@ public class Pedido implements IPedido{
 
     @Override
     public Set<IProducto> getProductos() {
-        return null;
+        Set<IProducto> productos = null;
+        for (IContenedor c : contenedores) {
+            if (productos == null) {
+                productos = c.getProductos();
+            } else {
+                productos.addAll(c.getProductos());
+            }
+        }
+        return productos;
     }
 
     @Override
@@ -29,22 +38,27 @@ public class Pedido implements IPedido{
 
     @Override
     public void addContenedor(IContenedor contenedor) {
-    contenedores.add(contenedor);
+        contenedores.add(contenedor);
     }
 
     @Override
     public IContenedor addProducto(IProducto producto) {
+        for (IContenedor contenedor : contenedores) {
+            if (contenedor.meter(producto)) {
+                return contenedor;
+            }
+        }
+        System.err.println(producto.getReferencia() + " rechazado del pedido");
         return null;
     }
 
     @Override
     public String toString() {
-      StringBuilder sb = new StringBuilder();
-      sb.append("Pedido: " + referencia + "\n");
-      for (IContenedor contenedor : contenedores){
-              sb.append("\t" + contenedor + "\n");
-          }
-          return sb.toString();
-      }
+        StringBuilder sb = new StringBuilder();
+        sb.append("Pedido: " + referencia + "\n");
+        for (IContenedor contenedor : contenedores) {
+            sb.append("\t" + contenedor + "\n");
+        }
+        return sb.toString();
     }
-
+}

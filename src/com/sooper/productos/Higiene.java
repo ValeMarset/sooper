@@ -3,7 +3,8 @@ package com.sooper.productos;
 import com.sooper.IProducto;
 import com.sooper.enums.Categoria;
 
-public class Higiene extends Producto{
+public class Higiene extends Producto {
+
     public Higiene(String referencia, int peso, int volumen) {
         super(referencia, peso, volumen);
     }
@@ -15,6 +16,6 @@ public class Higiene extends Producto{
 
     @Override
     public boolean esCompatible(IProducto p) {
-        return false;
+        return !Categoria.ALIMENTACION.equals(p.getCategoria());
     }
 }

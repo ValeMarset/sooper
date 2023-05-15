@@ -10,7 +10,6 @@ public interface IContenedor {
 
     int getVolumen();
 
-    int getSuperficie();
     int volumenDisponible();
 
     int getResistencia();
@@ -22,5 +21,7 @@ public interface IContenedor {
     boolean meter(IProducto producto);
 
     boolean resiste(IProducto producto);
+
+    int getSuperficie();
 
 }

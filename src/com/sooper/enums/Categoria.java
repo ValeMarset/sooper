@@ -1,5 +1,5 @@
 package com.sooper.enums;
 
 public enum Categoria {
-    ALIMENTACION, DROGUERIA, HIGIENE, MASOCTA;
+    ALIMENTACION, DROGUERIA, HIGIENE, MASCOTA;
 }
